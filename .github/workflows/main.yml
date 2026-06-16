@@ -1,0 +1,44 @@
+name: Python CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # Фрагмент 1: Збірка
+  build:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Installing dependencies
+        run: |
+          echo "Installing dependencies..."
+          pip install -r requirements.txt
+
+  # Фрагмент 2: Тестування
+  test:
+    needs: build # Чекає завершення build
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Running tests
+        run: |
+          echo "Running tests..."
+          python -m unittest
+
+  # Фрагмент 3: Розгортання
+  deploy:
+    needs: test # Чекає завершення test
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploying application to LightSail
+        run: |
+          echo "Deploying application to LightSail..."
+          python app.py &
